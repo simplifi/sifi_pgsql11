@@ -1,0 +1,176 @@
+{
+    "kind": "Service",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "pgbadger",
+        "labels": {
+            "name": "pgbadger",
+            "cleanup": "$CCP_NAMESPACE-pgbadger"
+        }
+    },
+    "spec": {
+        "ports": [
+            {
+                "name": "postgres",
+                "protocol": "TCP",
+                "port": 5432,
+                "targetPort": 5432,
+                "nodePort": 0
+            },
+            {
+                "name": "pgbadger",
+                "protocol": "TCP",
+                "port": 10000,
+                "targetPort": 10000,
+                "nodePort": 0
+            }
+        ],
+        "selector": {
+            "name": "pgbadger"
+        },
+        "type": "ClusterIP",
+        "sessionAffinity": "None"
+    }
+}
+
+{
+    "kind": "Pod",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "pgbadger",
+        "labels": {
+            "name": "pgbadger",
+            "cleanup": "$CCP_NAMESPACE-pgbadger"
+        }
+    },
+    "spec": {
+        "securityContext": {},
+        "containers": [
+            {
+                "name": "postgres",
+                "image": "$CCP_IMAGE_PREFIX/crunchy-postgres:$CCP_IMAGE_TAG",
+                "readinessProbe": {
+                    "exec": {
+                        "command": [
+                            "/opt/cpm/bin/readiness.sh"
+                        ]
+                    },
+                    "initialDelaySeconds": 40,
+                    "timeoutSeconds": 1
+                },
+                "livenessProbe": {
+                    "exec": {
+                        "command": [
+                            "/opt/cpm/bin/liveness.sh"
+                        ]
+                    },
+                    "initialDelaySeconds": 40,
+                    "timeoutSeconds": 1
+                },
+                "ports": [
+                    {
+                        "containerPort": 5432,
+                        "protocol": "TCP"
+                    }
+                ],
+                "env": [
+                    {
+                        "name": "PG_PRIMARY_USER",
+                        "value": "primaryuser"
+                    },
+                    {
+                        "name": "PG_PRIMARY_PORT",
+                        "value": "5432"
+                    },
+                    {
+                        "name": "PG_MODE",
+                        "value": "primary"
+                    },
+                    {
+                        "name": "PGHOST",
+                        "value": "/tmp"
+                    },
+                    {
+                        "name": "PG_PRIMARY_PASSWORD",
+                        "value": "password"
+                    },
+                    {
+                        "name": "PG_USER",
+                        "value": "testuser"
+                    },
+                    {
+                        "name": "PG_PASSWORD",
+                        "value": "password"
+                    },
+                    {
+                        "name": "PG_DATABASE",
+                        "value": "userdb"
+                    },
+                    {
+                        "name": "PG_ROOT_PASSWORD",
+                        "value": "password"
+                    }
+                ],
+                "volumeMounts": [
+                    {
+                        "mountPath": "/pgdata",
+                        "name": "pgdata",
+                        "readOnly": false
+                    }
+                ]
+            },
+            {
+                "name": "pgbadger",
+                "image": "$CCP_IMAGE_PREFIX/crunchy-pgbadger:$CCP_IMAGE_TAG",
+                "ports": [
+                    {
+                        "containerPort": 10000,
+                        "protocol": "TCP"
+                    }
+                ],
+                "readinessProbe": {
+                    "tcpSocket": {
+                        "port": 10000
+                    },
+                    "initialDelaySeconds": 20,
+                    "periodSeconds": 10
+                },
+                "livenessProbe": {
+                    "tcpSocket": {
+                        "port": 10000
+                    },
+                    "initialDelaySeconds": 15,
+                    "periodSeconds": 20
+                },
+                "env": [
+                    {
+                        "name": "BADGER_CUSTOM_OPTS",
+                        "value": "--incremental --prefix='%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h'"
+                    }
+                ],
+                "volumeMounts": [
+                    {
+                        "mountPath": "/pgdata",
+                        "name": "pgdata",
+                        "readOnly": true
+                    },
+                    {
+                        "mountPath": "/report",
+                        "name": "report",
+                        "readOnly": false
+                    }
+                ]
+            }
+        ],
+        "volumes": [
+            {
+                "name": "pgdata",
+                "emptyDir": {}
+            },
+            {
+                "name": "report",
+                "emptyDir": {}
+            }
+        ]
+    }
+}

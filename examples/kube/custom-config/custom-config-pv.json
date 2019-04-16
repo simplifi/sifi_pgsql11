@@ -1,0 +1,71 @@
+{
+    "apiVersion": "v1",
+    "kind": "PersistentVolume",
+    "metadata": {
+        "name": "$CCP_NAMESPACE-custom-config-pgdata",
+        "labels": {
+            "name": "$CCP_NAMESPACE-custom-config-pgdata",
+            "cleanup": "$CCP_NAMESPACE-custom-config"
+        }
+    },
+    "spec": {
+        "capacity": {
+            "storage": "$CCP_STORAGE_CAPACITY"
+        },
+        "accessModes": [
+            "$CCP_STORAGE_MODE"
+        ],
+        "hostPath": {
+            "path": "$CCP_STORAGE_PATH/$CCP_NAMESPACE-custom-config"
+        },
+        "persistentVolumeReclaimPolicy": "Retain"
+    }
+}
+
+{
+    "apiVersion": "v1",
+    "kind": "PersistentVolume",
+    "metadata": {
+        "name": "$CCP_NAMESPACE-custom-config-br",
+        "labels": {
+            "name": "$CCP_NAMESPACE-custom-config-br",
+            "cleanup": "$CCP_NAMESPACE-custom-config"
+        }
+    },
+    "spec": {
+        "capacity": {
+            "storage": "$CCP_STORAGE_CAPACITY"
+        },
+        "accessModes": [
+            "$CCP_STORAGE_MODE"
+        ],
+        "hostPath": {
+            "path": "$CCP_STORAGE_PATH/$CCP_NAMESPACE-custom-config"
+        },
+        "persistentVolumeReclaimPolicy": "Retain"
+    }
+}
+
+{
+    "apiVersion": "v1",
+    "kind": "PersistentVolume",
+    "metadata": {
+        "name": "$CCP_NAMESPACE-custom-config-pgwal",
+        "labels": {
+            "name": "$CCP_NAMESPACE-custom-config-pgwal",
+            "cleanup": "$CCP_NAMESPACE-custom-config"
+        }
+    },
+    "spec": {
+        "capacity": {
+            "storage": "$CCP_STORAGE_CAPACITY"
+        },
+        "accessModes": [
+            "$CCP_STORAGE_MODE"
+        ],
+        "hostPath": {
+            "path": "$CCP_STORAGE_PATH/$CCP_NAMESPACE-custom-config"
+        },
+        "persistentVolumeReclaimPolicy": "Retain"
+    }
+}

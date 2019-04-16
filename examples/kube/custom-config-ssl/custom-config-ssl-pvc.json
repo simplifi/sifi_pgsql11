@@ -1,0 +1,51 @@
+{
+    "kind": "PersistentVolumeClaim",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "custom-config-ssl-pgdata",
+        "labels": {
+            "cleanup": "$CCP_NAMESPACE-custom-config-ssl"
+        }
+    },
+    "spec": {
+        "selector": {
+            "matchLabels": {
+                "name": "$CCP_NAMESPACE-custom-config-ssl-pgdata"
+            }
+        },
+        "accessModes": [
+            "$CCP_STORAGE_MODE"
+        ],
+        "resources": {
+            "requests": {
+                "storage": "$CCP_STORAGE_CAPACITY"
+            }
+        }
+    }
+}
+
+{
+    "kind": "PersistentVolumeClaim",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "custom-config-ssl-backrestrepo",
+        "labels": {
+            "cleanup": "$CCP_NAMESPACE-custom-config-ssl"
+        }
+    },
+    "spec": {
+        "selector": {
+            "matchLabels": {
+                "name": "$CCP_NAMESPACE-custom-config-ssl-backrestrepo"
+            }
+        },
+        "accessModes": [
+            "$CCP_STORAGE_MODE"
+        ],
+        "resources": {
+            "requests": {
+                "storage": "$CCP_STORAGE_CAPACITY"
+            }
+        }
+    }
+}

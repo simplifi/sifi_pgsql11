@@ -1,0 +1,77 @@
+{
+    "kind": "PersistentVolumeClaim",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "custom-config-pgdata",
+        "labels": {
+            "cleanup": "$CCP_NAMESPACE-custom-config"
+        }
+    },
+    "spec": {
+        "selector": {
+            "matchLabels": {
+                "name": "$CCP_NAMESPACE-custom-config-pgdata"
+            }
+        },
+        "accessModes": [
+            "$CCP_STORAGE_MODE"
+        ],
+        "resources": {
+            "requests": {
+                "storage": "$CCP_STORAGE_CAPACITY"
+            }
+        }
+    }
+}
+
+{
+    "kind": "PersistentVolumeClaim",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "custom-config-br",
+        "labels": {
+            "cleanup": "$CCP_NAMESPACE-custom-config"
+        }
+    },
+    "spec": {
+        "selector": {
+            "matchLabels": {
+                "name": "$CCP_NAMESPACE-custom-config-br"
+            }
+        },
+        "accessModes": [
+            "$CCP_STORAGE_MODE"
+        ],
+        "resources": {
+            "requests": {
+                "storage": "$CCP_STORAGE_CAPACITY"
+            }
+        }
+    }
+}
+
+{
+    "kind": "PersistentVolumeClaim",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "custom-config-pgwal",
+        "labels": {
+            "cleanup": "$CCP_NAMESPACE-custom-config"
+        }
+    },
+    "spec": {
+        "selector": {
+            "matchLabels": {
+                "name": "$CCP_NAMESPACE-custom-config-pgwal"
+            }
+        },
+        "accessModes": [
+            "$CCP_STORAGE_MODE"
+        ],
+        "resources": {
+            "requests": {
+                "storage": "$CCP_STORAGE_CAPACITY"
+            }
+        }
+    }
+}

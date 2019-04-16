@@ -1,0 +1,91 @@
+{
+    "apiVersion": "batch/v1",
+    "kind": "Job",
+    "metadata": {
+        "name": "backrest-delta-restore-job"
+    },
+    "spec": {
+        "backoffLimit": 0,
+        "template": {
+            "metadata": {
+                "name": "backrest-delta-restore-job",
+                "labels": {
+                    "app": "backrest-delta-restore-job",
+                    "cleanup": "$CCP_NAMESPACE-backrest-delta-restore"
+                }
+            },
+            "spec": {
+                "securityContext": {
+                    $CCP_SECURITY_CONTEXT
+                },
+                "containers": [
+                    {
+                        "name": "backrest-restore",
+                        "image": "$CCP_IMAGE_PREFIX/crunchy-backrest-restore:$CCP_IMAGE_TAG",
+                        "env": [
+                            {
+                                "name": "PGBACKREST_STANZA",
+                                "value": "db"
+                            },
+                            {
+                                "name": "PGBACKREST_PG1_PATH",
+                                "value": "/pgdata/backrest"
+                            },
+                            {
+                                "name": "PGBACKREST_REPO1_PATH",
+                                "value": "/backrestrepo/backrest-backups"
+                            },
+                            {
+                                "name": "PGBACKREST_DELTA",
+                                "value": "y"
+                            },
+                            {
+                                "name": "PGBACKREST_LOG_PATH",
+                                "value": "/tmp"
+                            },
+                            {
+                                "name": "PGBACKREST_TYPE",
+                                "value": "time"
+                            },
+                            {
+                                "name": "PGBACKREST_TARGET",
+                                "value": "$CCP_BACKREST_TIMESTAMP"
+                            },
+                            {
+                                "name": "PGBACKREST_LOG_LEVEL_STDERR",
+                                "value": "info"
+                            }
+                        ],
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/pgdata",
+                                "name": "pgdata",
+                                "readOnly": false
+                            },
+                            {
+                                "mountPath": "/backrestrepo",
+                                "name": "backrestrepo",
+                                "readOnly": true
+                            }
+                        ]
+                    }
+                ],
+                "volumes": [
+                    {
+                        "name": "backrestrepo",
+                        "persistentVolumeClaim": {
+                            "claimName": "br-backups"
+                        }
+                    },
+                    {
+                        "name": "pgdata",
+                        "persistentVolumeClaim": {
+                            "claimName": "br-pgdata"
+                        }
+                    }
+                ],
+                "restartPolicy": "Never"
+            }
+        }
+    }
+}

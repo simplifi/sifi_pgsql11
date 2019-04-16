@@ -1,0 +1,49 @@
+{
+    "apiVersion": "v1",
+    "kind": "PersistentVolume",
+    "metadata": {
+        "name": "$CCP_NAMESPACE-custom-config-ssl-pgdata",
+        "labels": {
+            "name": "$CCP_NAMESPACE-custom-config-ssl-pgdata",
+            "cleanup": "$CCP_NAMESPACE-custom-config-ssl"
+        }
+    },
+    "spec": {
+        "capacity": {
+            "storage": "$CCP_STORAGE_CAPACITY"
+        },
+        "accessModes": [
+            "$CCP_STORAGE_MODE"
+        ],
+        "nfs": {
+            "path": "$CCP_STORAGE_PATH/$CCP_NAMESPACE-custom-config-ssl",
+            "server": "$CCP_NFS_IP"
+        },
+        "persistentVolumeReclaimPolicy": "Retain"
+    }
+}
+
+{
+    "apiVersion": "v1",
+    "kind": "PersistentVolume",
+    "metadata": {
+        "name": "$CCP_NAMESPACE-custom-config-ssl-backrestrepo",
+        "labels": {
+            "name": "$CCP_NAMESPACE-custom-config-ssl-backrestrepo",
+            "cleanup": "$CCP_NAMESPACE-custom-config-ssl"
+        }
+    },
+    "spec": {
+        "capacity": {
+            "storage": "$CCP_STORAGE_CAPACITY"
+        },
+        "accessModes": [
+            "$CCP_STORAGE_MODE"
+        ],
+        "nfs": {
+            "path": "$CCP_STORAGE_PATH/$CCP_NAMESPACE-custom-config-ssl",
+            "server": "$CCP_NFS_IP"
+        },
+        "persistentVolumeReclaimPolicy": "Retain"
+    }
+}

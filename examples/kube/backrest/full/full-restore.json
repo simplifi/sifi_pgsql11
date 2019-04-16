@@ -1,0 +1,75 @@
+{
+    "apiVersion": "batch/v1",
+    "kind": "Job",
+    "metadata": {
+        "name": "backrest-full-restore-job"
+    },
+    "spec": {
+        "backoffLimit": 0,
+        "template": {
+            "metadata": {
+                "name": "backrest-full-restore-job",
+                "labels": {
+                    "app": "backrest-full-restore-job",
+                    "cleanup": "$CCP_NAMESPACE-backrest-full-restore"
+                }
+            },
+            "spec": {
+                "securityContext": {
+                    $CCP_SECURITY_CONTEXT
+                },
+                "containers": [
+                    {
+                        "name": "backrest-restore",
+                        "image": "$CCP_IMAGE_PREFIX/crunchy-backrest-restore:$CCP_IMAGE_TAG",
+                        "env": [
+                            {
+                                "name": "PGBACKREST_STANZA",
+                                "value": "db"
+                            },
+                            {
+                                "name": "PGBACKREST_PG1_PATH",
+                                "value": "/pgdata/backrest-full-restored"
+                            },
+                            {
+                                "name": "PGBACKREST_REPO1_PATH",
+                                "value": "/backrestrepo/backrest-backups"
+                            },
+                            {
+                                "name": "PGBACKREST_LOG_PATH",
+                                "value": "/tmp"
+                            }
+                        ],
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/pgdata",
+                                "name": "pgdata",
+                                "readOnly": false
+                            },
+                            {
+                                "mountPath": "/backrestrepo",
+                                "name": "backrestrepo",
+                                "readOnly": true
+                            }
+                        ]
+                    }
+                ],
+                "volumes": [
+                    {
+                        "name": "backrestrepo",
+                        "persistentVolumeClaim": {
+                            "claimName": "br-backups"
+                        }
+                    },
+                    {
+                        "name": "pgdata",
+                        "persistentVolumeClaim": {
+                            "claimName": "br-new-pgdata"
+                        }
+                    }
+                ],
+                "restartPolicy": "Never"
+            }
+        }
+    }
+}

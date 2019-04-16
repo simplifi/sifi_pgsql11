@@ -1,0 +1,146 @@
+{
+    "kind": "Service",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "pg-primary",
+        "labels": {
+            "name": "pg-primary",
+            "cleanup": "$CCP_NAMESPACE-pgbouncer"
+        }
+    },
+    "spec": {
+        "ports": [
+            {
+                "name": "pgsql",
+                "protocol": "TCP",
+                "port": 5432,
+                "targetPort": 5432,
+                "nodePort": 0
+            }
+        ],
+        "selector": {
+            "name": "pg-primary"
+        },
+        "type": "ClusterIP",
+        "sessionAffinity": "None"
+    },
+    "status": {
+        "loadBalancer": {}
+    }
+}
+
+{
+    "kind": "Pod",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "pg-primary",
+        "labels": {
+            "name": "pg-primary",
+            "cleanup": "$CCP_NAMESPACE-pgbouncer"
+        }
+    },
+    "spec": {
+        "securityContext": {
+            $CCP_SECURITY_CONTEXT
+        },
+        "containers": [
+            {
+                "name": "postgres",
+                "image": "$CCP_IMAGE_PREFIX/crunchy-postgres:$CCP_IMAGE_TAG",
+                "ports": [
+                    {
+                        "containerPort": 5432,
+                        "protocol": "TCP"
+                    }
+                ],
+                "readinessProbe": {
+                    "tcpSocket": {
+                        "port": 5432
+                    },
+                    "initialDelaySeconds": 5,
+                    "periodSeconds": 10
+                },
+                "livenessProbe": {
+                    "exec": {
+                        "command": [
+                            "/opt/cpm/bin/liveness.sh"
+                        ]
+                    },
+                    "initialDelaySeconds": 40,
+                    "timeoutSeconds": 1
+                },
+                "env": [
+                    {
+                        "name": "PG_PRIMARY_USER",
+                        "value": "primaryuser"
+                    },
+                    {
+                        "name": "PG_MODE",
+                        "value": "primary"
+                    },
+                    {
+                        "name": "PG_PRIMARY_PASSWORD",
+                        "valueFrom": {
+                            "secretKeyRef": {
+                                "name": "pgsql-secrets",
+                                "key": "pg-primary-password"
+                            }
+                        }
+                    },
+                    {
+                        "name": "PG_PRIMARY_PORT",
+                        "value": "5432"
+                    },
+                    {
+                        "name": "PG_USER",
+                        "value": "testuser"
+                    },
+                    {
+                        "name": "PG_PASSWORD",
+                        "valueFrom": {
+                            "secretKeyRef": {
+                                "name": "pgsql-secrets",
+                                "key": "pg-password"
+                            }
+                        }
+                    },
+                    {
+                        "name": "PG_DATABASE",
+                        "value": "userdb"
+                    },
+                    {
+                        "name": "PG_ROOT_PASSWORD",
+                        "valueFrom": {
+                            "secretKeyRef": {
+                                "name": "pgsql-secrets",
+                                "key": "pg-root-password"
+                            }
+                        }
+                    },
+                    {
+                        "name": "PGBOUNCER_PASSWORD",
+                        "valueFrom": {
+                            "secretKeyRef": {
+                                "name": "pgbouncer-secrets",
+                                "key": "pgbouncer-password"
+                            }
+                        }
+                    }
+                ],
+                "volumeMounts": [
+                    {
+                        "mountPath": "/pgdata",
+                        "name": "pgdata",
+                        "readOnly": false
+                    }
+                ]
+            }
+        ],
+        "volumes": [
+            {
+                "name": "pgdata",
+                "emptyDir": {}
+            }
+        ]
+    }
+}

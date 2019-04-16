@@ -1,0 +1,25 @@
+{
+    "kind": "PersistentVolumeClaim",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "primary-pgdata",
+        "labels": {
+            "cleanup": "$CCP_NAMESPACE-primary"
+        }
+    },
+    "spec": {
+        "selector": {
+            "matchLabels": {
+                "name": "$CCP_NAMESPACE-primary-pgdata"
+            }
+        },
+        "accessModes": [
+            "$CCP_STORAGE_MODE"
+        ],
+        "resources": {
+            "requests": {
+                "storage": "$CCP_STORAGE_CAPACITY"
+            }
+        }
+    }
+}

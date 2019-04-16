@@ -1,0 +1,29 @@
+---
+global:
+  scrape_interval: SCRAPE_INTERVAL
+  scrape_timeout: SCRAPE_TIMEOUT
+  evaluation_interval: 5s
+
+scrape_configs:
+- job_name: 'JOB_NAME'
+  kubernetes_sd_configs:
+  - role: pod
+
+  relabel_configs:
+  - source_labels: [__meta_kubernetes_pod_label_crunchy_collect]
+    action: keep
+    regex: true
+  - source_labels: [__meta_kubernetes_pod_container_port_number]
+    action: drop
+    regex: 5432
+  - source_labels: [__meta_kubernetes_namespace]
+    action: replace
+    target_label: kubernetes_namespace
+  - source_labels: [__meta_kubernetes_pod_name]
+    regex: (^[^-]*).*
+    target_label: instance
+    replacement: '$1'
+  - source_labels: [__meta_kubernetes_namespace,__meta_kubernetes_pod_label_name]
+    target_label: job
+    separator: ': '
+    replacement: '$1$2'

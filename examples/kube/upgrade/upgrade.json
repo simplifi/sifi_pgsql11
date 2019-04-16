@@ -1,0 +1,79 @@
+{
+    "apiVersion": "batch/v1",
+    "kind": "Job",
+    "metadata": {
+        "name": "upgrade",
+        "labels": {
+            "app": "upgrade",
+            "cleanup": "$CCP_NAMESPACE-upgrade"
+        }
+    },
+    "spec": {
+        "backoffLimit": 0,
+        "template": {
+            "metadata": {
+                "name": "upgrade",
+                "labels": {
+                    "app": "upgrade",
+                    "cleanup": "$CCP_NAMESPACE-upgrade"
+                }
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "pgolddata",
+                        "persistentVolumeClaim": {
+                            "claimName": "primary-pgdata"
+                        }
+                    },
+                    {
+                        "name": "pgnewdata",
+                        "persistentVolumeClaim": {
+                            "claimName": "upgrade-pgnewdata"
+                        }
+                    }
+                ],
+                "securityContext": {
+                    $CCP_SECURITY_CONTEXT
+                },
+                "containers": [
+                    {
+                        "name": "upgrade",
+                        "image": "$CCP_IMAGE_PREFIX/crunchy-upgrade:$CCP_IMAGE_TAG",
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/pgolddata",
+                                "name": "pgolddata",
+                                "readOnly": false
+                            },
+                            {
+                                "mountPath": "/pgnewdata",
+                                "name": "pgnewdata",
+                                "readOnly": false
+                            }
+                        ],
+                        "env": [
+                            {
+                                "name": "OLD_DATABASE_NAME",
+                                "value": "primary"
+                            },
+                            {
+                                "name": "NEW_DATABASE_NAME",
+                                "value": "primary-upgrade"
+                            },
+                            {
+                                "name": "OLD_VERSION",
+                                "value": "9.5"
+                            },
+                            {
+                                "name": "NEW_VERSION",
+                                "value": "10"
+                            }
+                        ]
+                    }
+                ],
+                "restartPolicy": "Never"
+            }
+        }
+    }
+}
