@@ -18,7 +18,7 @@ set -e
 source /opt/cpm/bin/common_lib.sh
 enable_debugging
 
-export PGROOT=$(find /usr/ -type d -name 'pgsql-*')
+export PGROOT=$(find /usr/ -type d -name 'pgsql-11')
 export PGDUMP_PORT=${PGDUMP_PORT:-5432}
 export PGDUMP_FILENAME=${PGDUMP_FILENAME:-dump}
 export PGPASSFILE=/tmp/pgpass

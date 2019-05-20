@@ -16,7 +16,7 @@
 source /opt/cpm/bin/common_lib.sh
 enable_debugging
 
-export PGROOT=$(find /usr/ -type d -name 'pgsql-*')
+export PGROOT=$(find /usr/ -type d -name 'pgsql-11')
 
 echo_info "Setting PGROOT to ${PGROOT?}."
 

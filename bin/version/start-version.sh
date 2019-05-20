@@ -39,7 +39,7 @@ export PG_PRIMARY_PORT=$PG_PRIMARY_PORT
 export PG_PRIMARY_USER=$PG_PRIMARY_USER
 export PG_DATABASE=$PG_DATABASE
 
-export PGROOT=$(find /usr/ -type d -name 'pgsql-*')
+export PGROOT=$(find /usr/ -type d -name 'pgsql-11')
 
 echo_info "Setting PGROOT to ${PGROOT?}."
 

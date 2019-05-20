@@ -17,7 +17,7 @@ source /opt/cpm/bin/common_lib.sh
 enable_debugging
 
 export PATH=$PATH:/opt/cpm/bin
-export PGROOT=$(find /usr/ -type d -name 'pgsql-*')
+export PGROOT=$(find /usr/ -type d -name 'pgsql-11')
 export PIDFILE=/tmp/sample-app.pid
 
 function trap_sigterm() {

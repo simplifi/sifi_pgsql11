@@ -18,7 +18,7 @@ set -e
 source /opt/cpm/bin/common_lib.sh
 enable_debugging
 
-export PGROOT=$(find /usr/ -type d -name 'pgsql-*')
+export PGROOT=$(find /usr/ -type d -name 'pgsql-11')
 export PGPASSFILE=/tmp/pgpass
 
 env_check_err "PGRESTORE_DB"

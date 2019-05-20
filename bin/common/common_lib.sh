@@ -77,7 +77,7 @@ function echo_warn() {
 }
 
 function pgisready() {
-    export PGROOT=$(find /usr/ -type d -name 'pgsql-*')
+    export PGROOT=$(find /usr/ -type d -name 'pgsql-11')
     local dbname=${1?}
     local dbhost=${2?}
     local dbport=${3?}

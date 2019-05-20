@@ -19,7 +19,7 @@ enable_debugging
 export DISABLE_NODE_EXPORTER=${DISABLE_NODE_EXPORTER:-false}
 export PG_EXP_HOME=$(find /opt/cpm/bin/ -type d -name 'postgres_exporter*')
 export NODE_EXP_HOME=$(find /opt/cpm/bin/ -type d -name 'node_exporter*')
-export PG_DIR=$(find /usr/ -type d -name 'pgsql-*')
+export PG_DIR=$(find /usr/ -type d -name 'pgsql-11')
 POSTGRES_EXPORTER_PIDFILE=/tmp/postgres_exporter.pid
 NODE_EXPORTER_PIDFILE=/tmp/node_exporter.pid
 CONFIG_DIR='/opt/cpm/conf'
